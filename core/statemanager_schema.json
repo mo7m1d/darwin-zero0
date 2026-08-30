@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DARWIN ZERO-0 State Schema",
+  "type": "object",
+  "description": "Machine-readable state foundation for ZERO-0 bootstrapped at $0 capital",
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "bootstrapped_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "capital": {
+      "type": "object",
+      "properties": {
+        "owner_supplied_cents": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "current_cents": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reserve_cents": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "child_agent_fund_cents": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["owner_supplied_cents", "current_cents"]
+    },
+    "model_router": {
+      "type": "object",
+      "properties": {
+        "default_model": {
+          "type": "string"
+        },
+        "free_preferred": {
+          "type": "boolean"
+        },
+        "cost_cap_cents": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["default_model", "free_preferred", "cost_cap_cents"]
+    }
+  },
+  "required": ["version", "bootstrapped_at", "capital", "model_router"]
+}

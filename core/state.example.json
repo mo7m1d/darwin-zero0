@@ -1,0 +1,30 @@
+{
+  "version": "0.1.0",
+  "bootstrapped_at": "2026-08-30T00:00:00.000000",
+  "capital": {
+    "owner_supplied_cents": 0,
+    "current_cents": 0,
+    "reserve_cents": 0,
+    "child_agent_fund_cents": 0
+  },
+  "model_router": {
+    "default_model": "nemotron-3.5-lightning-free",
+    "free_preferred": true,
+    "cost_cap_cents": 1000
+  },
+  "events": [],
+  "incidents": [],
+  "ledger": [
+    {
+      "id": "ledger_opening_balance",
+      "timestamp": "2026-08-30T00:00:00.000000",
+      "type": "opening_balance",
+      "amount_cents": 0,
+      "description": "DARWIN ZERO-0 opening balance: /usr/bin/bash owner-supplied business capital"
+    }
+  ],
+  "opportunities": [],
+  "experiments": [],
+  "capabilities": [],
+  "children": []
+}
