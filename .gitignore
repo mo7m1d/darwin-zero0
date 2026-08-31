@@ -3,3 +3,5 @@ __pycache__/
 .pytest_cache/
 core/state.json
 core/capability_registry.json
+
+core/execution_discipline_incidents.json
