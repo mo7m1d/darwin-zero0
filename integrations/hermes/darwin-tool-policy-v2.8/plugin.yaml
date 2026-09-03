@@ -1,0 +1,6 @@
+name: darwin-tool-policy
+version: "2.8.0"
+description: "DARWIN ZERO-0 Safety Kernel candidate extending v2.6 recovery and CP11 budget/AutoWork control-plane protection without tools."
+author: "DARWIN Control Plane"
+provides_hooks:
+  - pre_tool_call
