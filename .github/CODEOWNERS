@@ -1,0 +1,5 @@
+# Security-sensitive repository ownership
+* @mo7m1d
+/.github/ @mo7m1d
+/control_plane/ @mo7m1d
+/scripts/verify_supply_chain.py @mo7m1d

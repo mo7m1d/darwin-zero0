@@ -1,0 +1,69 @@
+{
+  "default_policy": "deny",
+  "entries": [
+    {
+      "default_branch": "main",
+      "id": "darwin-canonical-github",
+      "integrity": {
+        "acceptance_required_before_promotion": true,
+        "candidate_review_required": true,
+        "mutable_branch_trust": false
+      },
+      "kind": "git_repository",
+      "operations": [
+        "read",
+        "fetch",
+        "push-owner-gated"
+      ],
+      "owner_approved": true,
+      "remote_aliases": [
+        "origin"
+      ],
+      "source": "https://github.com/mo7m1d/darwin-zero0"
+    }
+  ],
+  "github_actions": {
+    "default": "deny",
+    "immutable_commit_sha_required": true,
+    "individual_write_permissions_allowed": false,
+    "local_action_prefixes": [
+      "./"
+    ],
+    "permissions_write_all_allowed": false,
+    "pull_request_target_allowed": false,
+    "registered_actions": [
+      {
+        "action": "actions/checkout",
+        "commit_sha": "11d5960a326750d5838078e36cf38b85af677262",
+        "id": "actions-checkout-v4",
+        "owner_approved": true,
+        "purpose": "checkout repository contents in GitHub Actions",
+        "upstream_ref": "v4"
+      },
+      {
+        "action": "gitleaks/gitleaks-action",
+        "commit_sha": "ff98106e4c7b2bc287b24eaf42907196329070c7",
+        "id": "gitleaks-action-v2",
+        "owner_approved": true,
+        "purpose": "secret scanning in GitHub Actions",
+        "upstream_ref": "v2"
+      }
+    ],
+    "secret_access_default": "deny"
+  },
+  "mcp_plugins_skills": {
+    "default": "deny",
+    "registry_required": true
+  },
+  "package_sources": {
+    "acquisition_default": "deny",
+    "default": "deny",
+    "exact_versions_required": true,
+    "floating_versions_allowed": false,
+    "registered_packages": [],
+    "vcs_or_url_dependencies": "registry-required"
+  },
+  "schema": "darwin.integration-registry.v2",
+  "trust_model": "external-source-is-input-not-acceptance-evidence",
+  "version": 2
+}

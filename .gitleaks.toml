@@ -1,0 +1,4 @@
+title = "DARWIN ZERO-0 gitleaks configuration"
+
+[extend]
+useDefault = true
