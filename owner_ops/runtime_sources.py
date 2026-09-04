@@ -1,10 +1,12 @@
 from __future__ import annotations
+
 import json
 import sqlite3
 from pathlib import Path
 
 HERMES_HOME = Path(r"C:\Users\m7mdk\AppData\Local\hermes")
 DARWIN_REPO = Path(r"C:\Users\m7mdk\DARWIN\darwin-zero0")
+BOARD_SLUG = "darwin-zero0"
 
 def _safe_json(path):
     try:
@@ -13,12 +15,17 @@ def _safe_json(path):
     except Exception:
         return {}
 
+def _ro_connect(path):
+    uri = "file:" + path.resolve().as_posix() + "?mode=ro"
+    db = sqlite3.connect(uri, uri=True, timeout=2)
+    db.row_factory = sqlite3.Row
+    return db
+
 def _db_health(path):
     if not path.exists():
         return "MISSING"
     try:
-        uri = "file:" + path.resolve().as_posix() + "?mode=ro"
-        with sqlite3.connect(uri, uri=True, timeout=2) as db:
+        with _ro_connect(path) as db:
             result = db.execute("PRAGMA quick_check").fetchone()
         return "OK" if result and result[0] == "ok" else "DEGRADED"
     except Exception:
@@ -63,6 +70,81 @@ def _plugin_version(name):
         pass
     return "UNKNOWN"
 
+def _kanban_summary(db_path):
+    empty = {
+        "name": "No active task",
+        "progress": "0%",
+        "progress_percent": 0,
+        "status": "EMPTY",
+        "task_status": "none",
+        "task_id": "",
+        "assignee": "",
+        "counts": {"total": 0, "done": 0, "running": 0, "blocked": 0, "review": 0},
+    }
+    if not db_path.exists():
+        return {**empty, "status": "UNKNOWN"}
+
+    try:
+        with _ro_connect(db_path) as db:
+            columns = {row["name"] for row in db.execute("PRAGMA table_info(tasks)")}
+            required = {"id", "title", "status", "assignee", "priority", "created_at", "started_at", "completed_at"}
+            if not required.issubset(columns):
+                return {**empty, "status": "DEGRADED"}
+
+            rows = db.execute(
+                "SELECT status, COUNT(*) AS n FROM tasks WHERE status != 'archived' GROUP BY status"
+            ).fetchall()
+            counts = {str(row["status"]): int(row["n"]) for row in rows}
+            total = sum(counts.values())
+            done = counts.get("done", 0)
+            percent = 100 if total and done == total else (round(done * 100 / total) if total else 0)
+
+            current = db.execute(
+                """
+                SELECT id, title, assignee, status, priority, created_at, started_at, completed_at
+                FROM tasks
+                WHERE status != 'archived'
+                ORDER BY
+                  CASE status
+                    WHEN 'running' THEN 0
+                    WHEN 'review' THEN 1
+                    WHEN 'blocked' THEN 2
+                    WHEN 'ready' THEN 3
+                    WHEN 'todo' THEN 4
+                    WHEN 'scheduled' THEN 5
+                    WHEN 'triage' THEN 6
+                    WHEN 'done' THEN 7
+                    ELSE 8
+                  END,
+                  COALESCE(started_at, completed_at, created_at) DESC,
+                  priority DESC,
+                  created_at DESC
+                LIMIT 1
+                """
+            ).fetchone()
+
+        if not current:
+            return empty
+
+        return {
+            "name": str(current["title"] or "Untitled task")[:180],
+            "progress": f"{percent}%",
+            "progress_percent": percent,
+            "status": "OK",
+            "task_status": str(current["status"] or "unknown")[:32],
+            "task_id": str(current["id"] or "")[:128],
+            "assignee": str(current["assignee"] or "unassigned")[:96],
+            "counts": {
+                "total": total,
+                "done": done,
+                "running": counts.get("running", 0),
+                "blocked": counts.get("blocked", 0),
+                "review": counts.get("review", 0),
+            },
+        }
+    except Exception:
+        return {**empty, "status": "DEGRADED"}
+
 class RuntimeSources:
     def __init__(self):
         self.telemetry = HERMES_HOME / "darwin" / "telemetry" / "events.sqlite3"
@@ -71,7 +153,8 @@ class RuntimeSources:
         self.context = HERMES_HOME / "darwin" / "context" / "context.sqlite3"
         self.usage = HERMES_HOME / "darwin" / "model-control" / "usage.sqlite3"
         self.skills = HERMES_HOME / "darwin" / "model-control" / "skill-registry.sqlite3"
-        self.board = HERMES_HOME / "kanban" / "boards" / "darwin-zero0" / "board.json"
+        self.board = HERMES_HOME / "kanban" / "boards" / BOARD_SLUG / "board.json"
+        self.kanban_db = HERMES_HOME / "kanban" / "boards" / BOARD_SLUG / "kanban.db"
         self.recovery_root = HERMES_HOME / "darwin" / "recovery"
 
     def readers(self):
@@ -90,12 +173,11 @@ class RuntimeSources:
         }
 
     def task(self):
-        board = _safe_json(self.board)
-        return {
-            "name": str(board.get("active_task") or board.get("current_task") or "UNKNOWN")[:180],
-            "progress": str(board.get("progress") or "UNKNOWN")[:64],
-            "status": "OK" if self.board.exists() else "UNKNOWN",
-        }
+        task = _kanban_summary(self.kanban_db)
+        meta = _safe_json(self.board)
+        task["board"] = str(meta.get("name") or BOARD_SLUG)[:96]
+        task["source"] = "KANBAN_SQLITE"
+        return task
 
     def control(self):
         return {
