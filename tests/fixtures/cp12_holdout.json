@@ -1,0 +1,12 @@
+{
+  "queries": [
+    {"query":"current canonical commit","expected":"185832bc4dd7a6273acb3eacf2add0d67377c6b5"},
+    {"query":"current safety version","expected":"2.8.0"},
+    {"query":"default spend cents","expected":0},
+    {"query":"current roadmap next","expected":"CP12_CONTEXT_CONTINUITY_RETRIEVAL"},
+    {"query":"model turn token accounting","expected":"DEFERRED_TO_CP13_COST_CONTROLLER"},
+    {"query":"milestone cp09 status","expected":"COMPLETE"},
+    {"query":"milestone cp10 status","expected":"COMPLETE"},
+    {"query":"milestone cp11 status","expected":"COMPLETE"}
+  ]
+}
