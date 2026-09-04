@@ -1,0 +1,40 @@
+{
+  "schema": "darwin.eco00.platform-registry.v1",
+  "platforms": [
+    {
+      "platform_id": "ebay",
+      "status": "API_CANDIDATE",
+      "api": "official Sell Inventory API",
+      "default_mode": "DRY_RUN",
+      "policy_notes": ["wholesale supplier dropshipping may be permitted", "retail or marketplace-to-eBay direct fulfillment is prohibited", "API availability is not permission"]
+    },
+    {
+      "platform_id": "etsy",
+      "status": "API_CANDIDATE",
+      "api": "Open API v3",
+      "default_mode": "DRY_RUN",
+      "policy_notes": ["listing, shop, and order writes require proper app and OAuth scopes"]
+    },
+    {
+      "platform_id": "shopify",
+      "status": "API_CANDIDATE",
+      "api": "GraphQL Admin API",
+      "default_mode": "DRY_RUN",
+      "policy_notes": ["API availability is not permission"]
+    },
+    {
+      "platform_id": "printful",
+      "status": "API_CANDIDATE",
+      "api": "REST API",
+      "default_mode": "DRY_RUN",
+      "policy_notes": ["real order submission is an external effect"]
+    },
+    {
+      "platform_id": "upwork",
+      "status": "ACCESS_REVIEW_REQUIRED",
+      "api": "GraphQL API",
+      "default_mode": "DRY_RUN",
+      "policy_notes": ["do not assume account access, API approval, scopes, or permission"]
+    }
+  ]
+}
