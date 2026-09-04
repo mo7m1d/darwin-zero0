@@ -1,0 +1,6 @@
+name: darwin-tool-policy
+version: "3.0.0"
+description: "DARWIN ZERO-0 Safety Kernel candidate preserving v2.9 and adding CP13 model, cost, cache, and evaluated-integration protection without tools."
+author: "DARWIN Control Plane"
+provides_hooks:
+  - pre_tool_call

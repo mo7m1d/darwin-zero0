@@ -13,6 +13,11 @@ MAX_INT = 2**63 - 1
 class BudgetError(RuntimeError): pass
 class BudgetDenied(BudgetError): pass
 
+class ClosingConnection(sqlite3.Connection):
+    def __exit__(self, *args):
+        try: return super().__exit__(*args)
+        finally: self.close()
+
 def integer(value, name):
     if isinstance(value, bool) or not isinstance(value, int) or value < 0 or value > MAX_INT:
         raise BudgetError(f"invalid {name}")
@@ -26,7 +31,7 @@ class BudgetStore:
         self._initialize()
 
     def connect(self):
-        db = sqlite3.connect(self.path, timeout=30, isolation_level=None)
+        db = sqlite3.connect(self.path, timeout=30, isolation_level=None, factory=ClosingConnection)
         db.row_factory = sqlite3.Row
         db.execute("PRAGMA journal_mode=WAL")
         db.execute("PRAGMA synchronous=FULL")

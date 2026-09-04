@@ -1,0 +1,13 @@
+{
+  "schema": "darwin.cp13.router-holdout.v1",
+  "cases": [
+    {"name": "offline coding", "capabilities": ["coding", "tools"], "privacy": ["local"], "expected": "local.code.v1"},
+    {"name": "free vision", "capabilities": ["vision"], "privacy": ["remote-standard"], "expected": "remote.free.v1"},
+    {"name": "paid reasoning blocked", "capabilities": ["reasoning"], "privacy": ["remote-standard"], "expected": "OWNER_DECISION"},
+    {"name": "unknown never free", "capabilities": ["text"], "privacy": ["forbidden-zone"], "expected": "NO_QUALIFYING_MODEL"},
+    {"name": "context overflow", "capabilities": ["coding"], "privacy": ["local"], "context_tokens": 100001, "expected": "NO_QUALIFYING_MODEL"},
+    {"name": "tool capability", "capabilities": ["tools"], "privacy": ["local"], "expected": "local.code.v1"},
+    {"name": "structured free", "capabilities": ["structured"], "privacy": ["local", "remote-standard"], "expected": "local.code.v1"},
+    {"name": "paid explicitly authorized", "capabilities": ["reasoning"], "privacy": ["remote-standard"], "spend_authorized": true, "spend_remaining_micros": 100000, "expected": "remote.paid.v1"}
+  ]
+}
